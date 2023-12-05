@@ -113,9 +113,9 @@ class NarutoWikiCrawler(CharacterWikiCrawler):
         other_cleaned_pages = []
 
         for page in pages:
-            if "of the original Naruto anime" in page[0]:
+            if "of the original Naruto anime" in page[1]:
                 original_cleaned_pages.append(f"{page[1]}: {page[0]}")
-            elif "of the Naruto: Shippūden anime" in page[0]:
+            elif "of the Naruto: Shippūden anime" in page[1]:
                 shippuden_cleaned_pages.append(f"{page[1]}: {page[0]}")
             else:
                 other_cleaned_pages.append(f"{page[1]}: {page[0]}")
