@@ -108,9 +108,16 @@ class NarutoWikiCrawler(CharacterWikiCrawler):
 
     def get_pages(self):
         pages = self.crawl()
-        cleaned_pages = []
+        original_cleaned_pages = []
+        shippuden_cleaned_pages = []
+        other_cleaned_pages = []
 
         for page in pages:
-            cleaned_pages.append(f"{page[1]}: {page[0]}")
+            if "of the original Naruto anime" in page[0]:
+                original_cleaned_pages.append(f"{page[1]}: {page[0]}")
+            elif "of the Naruto: Shippūden anime" in page[0]:
+                shippuden_cleaned_pages.append(f"{page[1]}: {page[0]}")
+            else:
+                other_cleaned_pages.append(f"{page[1]}: {page[0]}")
 
-        return sorted(cleaned_pages, key=get_number)
+        return sorted(original_cleaned_pages, key=get_number) + sorted(shippuden_cleaned_pages, key=get_number) + sorted(other_cleaned_pages, key=get_number)
