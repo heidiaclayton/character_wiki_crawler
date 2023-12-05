@@ -1,10 +1,8 @@
 from pyquery import PyQuery as pq
-
-
-# works for tokyo ghoul and naruto
 from utils import print_dot
 
 
+# works for tokyo ghoul and naruto
 def v1(base_url: str, category):
     chapters_gathered = False
     chapters_urls = set()

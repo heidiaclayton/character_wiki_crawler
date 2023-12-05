@@ -1,4 +1,5 @@
 from pyquery import PyQuery as pq
+import re
 import page_gatherer
 from utils import print_dot
 
@@ -91,10 +92,21 @@ class NarutoWikiCrawler(CharacterWikiCrawler):
 
             for link in links:
                 if link.text and self.character in link.text:
-                    pages.append(chapter)
+                    text = q("div.mw-parser-output").text()
+                    matches = re.search("episode \d+ of the .+ anime", text)
+                    pages.append([chapter, matches.group() if matches is not None else "Could not find episode number"])
                     break
             count += 1
 
         print("\nDone crawling.")
 
         return pages
+
+    def get_pages(self):
+        pages = self.crawl()
+        cleaned_pages = []
+
+        for page in pages:
+            cleaned_pages.append(f"{page[1]}: {page[0]}")
+
+        return sorted(cleaned_pages)
