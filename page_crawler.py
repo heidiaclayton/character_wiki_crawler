@@ -1,7 +1,7 @@
 from pyquery import PyQuery as pq
 import re
 import page_gatherer
-from utils import print_dot
+from utils import print_dot, get_number
 
 
 class CharacterWikiCrawler:
@@ -49,7 +49,7 @@ class TokyoGhoulWikiCrawler(CharacterWikiCrawler):
                     if len(children) > 1:
                         pages.append([chapter, children[1].text])
                     else:
-                        pages.append([chapter, "Appears"])
+                        pages.append([chapter, "(Appears)"])
             count += 1
 
         print("\nDone crawling.")
@@ -59,6 +59,7 @@ class TokyoGhoulWikiCrawler(CharacterWikiCrawler):
     def get_pages(self):
         pages = self.crawl()
         cleaned_pages = []
+        re_cleaned_pages = []
 
         for page in pages:
             split_page = page[0].split(f"{self.base_url}/wiki/")
@@ -67,9 +68,12 @@ class TokyoGhoulWikiCrawler(CharacterWikiCrawler):
                 cleaned_pages.append(page)
                 continue
 
-            cleaned_pages.append(f"{split_page[1].replace('_', ' ')} ({page[1]}): {page[0]}")
+            if split_page[1].startswith("Re:"):
+                re_cleaned_pages.append(f"{split_page[1].replace('_', ' ')} {page[1]}: {page[0]}")
+            else:
+                cleaned_pages.append(f"{split_page[1].replace('_', ' ')} {page[1]}: {page[0]}")
 
-        return sorted(cleaned_pages)
+        return sorted(cleaned_pages, key=get_number) + sorted(re_cleaned_pages, key=get_number)
 
 
 class NarutoWikiCrawler(CharacterWikiCrawler):
@@ -109,4 +113,4 @@ class NarutoWikiCrawler(CharacterWikiCrawler):
         for page in pages:
             cleaned_pages.append(f"{page[1]}: {page[0]}")
 
-        return sorted(cleaned_pages)
+        return sorted(cleaned_pages, key=get_number)
