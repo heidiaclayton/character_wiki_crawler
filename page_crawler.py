@@ -153,5 +153,15 @@ class JJKWikiCrawler(CharacterWikiCrawler):
 
     def get_pages(self):
         pages = self.crawl()
+        cleaned_pages = []
 
-        return sorted(pages, key=get_number)
+        for page in pages:
+            split_page = page.split(f"{self.base_url}/wiki/")
+
+            if len(split_page) != 2:
+                cleaned_pages.append(page)
+                continue
+
+            cleaned_pages.append(f"{split_page[1].replace('_', ' ')}: {page}")
+
+        return sorted(cleaned_pages, key=get_number)
