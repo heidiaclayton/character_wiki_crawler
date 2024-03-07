@@ -1,35 +1,34 @@
-from page_crawler import TokyoGhoulWikiCrawler, NarutoWikiCrawler
+import inquirer
+from page_crawler import TokyoGhoulWikiCrawler, NarutoWikiCrawler, JJKWikiCrawler
 
-available_wikis = ["tokyoghoul", "naruto"]
+available_wikis = ["tokyoghoul", "naruto", "jujutsu-kaisen"]
 available_categories = ["Episodes", "Chapters"]
 
-subdomain = input("What is the subdomain of the fandom wiki? ")
+questions = [
+    inquirer.List('subdomain', message="Which wiki do you want to search?", choices=available_wikis),
+    inquirer.List('category', message='Which category are you searching?', choices=available_categories)
+]
+answers = inquirer.prompt(questions)
+subdomain = answers['subdomain']
+category = answers['category']
 
-if subdomain not in available_wikis:
-    print(f"Invalid subdomain. Available wikis: {', '.join(available_wikis)}")
-    exit(1)
-
-category = input("What category are you searching (ex: episodes)? (case sensitive) ")
-
-if category not in available_categories:
-    print(f"Invalid category. Available categories: {', '.join(available_categories)}")
-    exit(1)
-
-character = input("What character are you looking for? ")
+character = input("What character are you looking for?\n")
 
 wiki_crawler = None
 
-if subdomain == "tokyoghoul":
+if subdomain == available_wikis[0]:
     wiki_crawler = TokyoGhoulWikiCrawler(subdomain, character, category)
-elif subdomain == "naruto":
+elif subdomain == available_wikis[1]:
     wiki_crawler = NarutoWikiCrawler(subdomain, character, category)
+elif subdomain == available_wikis[2]:
+    wiki_crawler = JJKWikiCrawler(subdomain, character, category)
 else:
     print("OOPS???")
     exit(1)
 
 pages = wiki_crawler.get_pages()
 
-print(f"Here are the pages where {character} appears!")
+print(f"Here are the pages where {character} appears or is mentioned!")
 
 for page in pages:
     print(page)

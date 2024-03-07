@@ -121,3 +121,37 @@ class NarutoWikiCrawler(CharacterWikiCrawler):
                 other_cleaned_pages.append(f"{page[1]}: {page[0]}")
 
         return sorted(original_cleaned_pages, key=get_number) + sorted(shippuden_cleaned_pages, key=get_number) + sorted(other_cleaned_pages, key=get_number)
+
+
+class JJKWikiCrawler(CharacterWikiCrawler):
+    def __init__(self, subdomain, character, category):
+        CharacterWikiCrawler.__init__(self, subdomain, character, category)
+
+        self.glossary = self.get_glossary()
+
+    def crawl(self):
+        pages = []
+        count = 1
+
+        print(f"Crawling pages for {self.character}")
+
+        for chapter in self.glossary:
+            print_dot(count, 50)
+            q = pq(url=chapter)
+
+            links = q("div.mw-parser-output a")
+
+            for link in links:
+                if link.text and self.character in link.text:
+                    pages.append(chapter)
+                    break
+            count += 1
+
+        print("\nDone crawling.")
+
+        return pages
+
+    def get_pages(self):
+        pages = self.crawl()
+
+        return sorted(pages, key=get_number)
