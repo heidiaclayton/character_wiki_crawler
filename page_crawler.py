@@ -5,7 +5,7 @@ from utils import print_dot, get_number
 
 
 class CharacterWikiCrawler:
-    def __init__(self, subdomain: str, character: str, category: str):
+    def __init__(self, subdomain: str, character, category: str):
         self.character = character
         self.category = category
         self.base_url = f"https://{subdomain}.fandom.com"
@@ -142,9 +142,93 @@ class JJKWikiCrawler(CharacterWikiCrawler):
             links = q("div.mw-parser-output a")
 
             for link in links:
-                if link.text and self.character in link.text:
+                if link.text and self.character == link.text.strip():
                     pages.append(chapter)
                     break
+            count += 1
+
+        print("\nDone crawling.")
+
+        return pages
+
+    def get_pages(self):
+        pages = self.crawl()
+        cleaned_pages = []
+
+        for page in pages:
+            split_page = page.split(f"{self.base_url}/wiki/")
+
+            if len(split_page) != 2:
+                cleaned_pages.append(page)
+                continue
+
+            cleaned_pages.append(f"{split_page[1].replace('_', ' ')}: {page}")
+
+        return sorted(cleaned_pages, key=get_number)
+
+
+class DungeonMeshiWikiCrawler(CharacterWikiCrawler):
+    def __init__(self, subdomain, character, category):
+
+        if "," in character:
+            character_list = [c.strip() for c in character.split(",")]
+
+            CharacterWikiCrawler.__init__(self, subdomain, character_list, category)
+        else:
+            CharacterWikiCrawler.__init__(self, subdomain, character, category)
+
+        self.glossary = self.get_glossary()
+
+    def crawl(self):
+        pages = []
+        count = 1
+
+        print(f"Crawling pages for {self.character}")
+
+        for chapter in self.glossary:
+            print_dot(count, 50)
+            q = pq(url=chapter)
+            found = False
+
+            links = q("#mw-content-text > div > ul > li")
+
+            for link in links:
+                children = link.getchildren()
+
+                for child in children:
+                    text = child.text
+
+                    if text and text.strip() in self.character:
+                        pages.append(chapter)
+                        found = True
+                        break
+
+            if not found:
+                links = q("#mw-content-text > div > table.article-table > tbody > tr > td > ul > li")
+
+                for link in links:
+                    children = link.getchildren()
+
+                    for child in children:
+                        text = child.text
+
+                        if text and text.strip() in self.character:
+                            pages.append(chapter)
+                            found = True
+                            break
+
+            if not found:
+                links = q("#mw-content-text > div > table > tbody > tr > td > ul > li")
+
+                for link in links:
+                    children = link.getchildren()
+
+                    for child in children:
+                        text = child.text
+
+                        if text and text.strip() in self.character:
+                            pages.append(chapter)
+                            break
             count += 1
 
         print("\nDone crawling.")

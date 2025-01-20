@@ -1,7 +1,7 @@
 import inquirer
-from page_crawler import TokyoGhoulWikiCrawler, NarutoWikiCrawler, JJKWikiCrawler
+from page_crawler import TokyoGhoulWikiCrawler, NarutoWikiCrawler, JJKWikiCrawler, DungeonMeshiWikiCrawler
 
-available_wikis = ["tokyoghoul", "naruto", "jujutsu-kaisen"]
+available_wikis = ["tokyoghoul", "naruto", "jujutsu-kaisen", "delicious-in-dungeon"]
 available_categories = ["Episodes", "Chapters"]
 
 questions = [
@@ -22,6 +22,8 @@ elif subdomain == available_wikis[1]:
     wiki_crawler = NarutoWikiCrawler(subdomain, character, category)
 elif subdomain == available_wikis[2]:
     wiki_crawler = JJKWikiCrawler(subdomain, character, category)
+elif subdomain == available_wikis[3]:
+    wiki_crawler = DungeonMeshiWikiCrawler(subdomain, character, category)
 else:
     print("OOPS???")
     exit(1)
