@@ -10,6 +10,8 @@ Supports wikis for the following series:
 
 This documentation is lacking. Sorry!
 
+Some of these may not be working anymore as I haven't tested them in months. Feel free to tweak them.
+
 ## Setup
 `python3 install -r requirements.txt`
 
